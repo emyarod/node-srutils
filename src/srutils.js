@@ -1,0 +1,106 @@
+#!/usr/bin/env node
+
+import program from 'commander';
+import Snoowrap from 'snoowrap';
+import fs from 'fs';
+import archiver from 'archiver';
+import rp from 'request-promise';
+import { version } from '../package.json';
+import keys from '../opendoors.json';
+
+const userAgent = `Node.js:node-srutils:v${version} (by /u/fiveSeveN_)`;
+const r = new Snoowrap({
+  userAgent,
+  ...keys,
+});
+
+// TODO: help and options
+program.version(version);
+
+const backup = (files, subreddit) => {
+  const output = fs.createWriteStream(`${__dirname}/example.zip`);
+  const archive = archiver('zip', { zlib: { level: 9 } });
+
+  output.on('close', () => {
+    console.log(`${archive.pointer()} total bytes`);
+    console.log(
+      'archiver has been finalized and the output file descriptor has closed.'
+    );
+  });
+
+  output.on('end', () => console.log('Data has been drained'));
+
+  archive.on('warning', err => {
+    if (err.code === 'ENOENT') {
+      console.log(err);
+    } else {
+      throw err;
+    }
+  });
+
+  archive.on('error', err => {
+    throw err;
+  });
+
+  archive.pipe(output);
+
+  files.forEach(({ name, data }) =>
+    archive.append(data, {
+      name: `${subreddit}/${name}`,
+    })
+  );
+
+  archive.finalize();
+};
+
+program
+  .command('backup <subreddit> [options]')
+  .description(`Backup a subreddit's settings and styles to a zipped archive`)
+  .action(async (arg, options) => {
+    console.log('sub', arg, 'opt', options);
+    const [, subreddit] = arg.split('/');
+    const settings = await r
+      .getSubreddit(subreddit)
+      .getSettings()
+      .then(data => ({
+        name: 'settings.json',
+        data: JSON.stringify(data, null, 2),
+      }))
+      .catch(console.error);
+    const flair = await r
+      .getSubreddit(subreddit)
+      .getUserFlairTemplates()
+      .then(data => ({
+        name: 'flair.json',
+        data: JSON.stringify(data, null, 2),
+      }))
+      .catch(console.error);
+    const stylesheet = await r
+      .getSubreddit(subreddit)
+      .getStylesheet()
+      .then(data => ({
+        name: 'stylesheet.css',
+        data,
+      }))
+      .catch(console.error);
+    const images = await rp({
+      headers: { 'User-Agent': userAgent },
+      url: `https://oauth.reddit.com/r/${subreddit}/about/stylesheet.json`,
+      json: true,
+    })
+      .auth(null, null, true, keys.accessToken)
+      .then(data =>
+        Promise.all(
+          data.data.images.map(async e => ({
+            name: `images/${e.name}.${e.url.split('.').slice(-1)[0]}`,
+            data: await rp({ uri: e.url, encoding: null }),
+          }))
+        )
+      );
+
+    backup([settings, flair, stylesheet, ...images], subreddit);
+
+    // TODO: save header
+  });
+
+program.parse(process.argv);
