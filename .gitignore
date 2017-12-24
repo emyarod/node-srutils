@@ -57,3 +57,8 @@ typings/
 # dotenv environment variables file
 .env
 
+# API Keys
+opendoors.json
+
+# lib
+lib
