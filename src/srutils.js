@@ -106,10 +106,48 @@ program
           }))
         )
       );
+    const subredditImages = await r
+      .oauthRequest({
+        uri: `/r/${subreddit}/about.json`,
+        json: true,
+      })
+      .then(data =>
+        Promise.resolve(
+          [
+            {
+              name: 'mobile_banner',
+              url: data.banner_img,
+            },
+            {
+              name: 'mobile_icon',
+              url: data.icon_img,
+            },
+            {
+              name: 'subreddit_header',
+              url: data.header_img,
+            },
+          ].reduce(
+            async (p, c) =>
+              c.url
+                ? [
+                    ...p,
+                    {
+                      name: `subreddit_images/${c.name}.${
+                        c.url.split('.').slice(-1)[0]
+                      }`,
+                      data: await rp({ uri: c.url, encoding: null }),
+                    },
+                  ]
+                : p,
+            []
+          )
+        )
+      );
 
-    backup([settings, flair, stylesheet, ...images], subreddit);
-
-    // TODO: save header
+    backup(
+      [settings, flair, stylesheet, ...stylesheetImages, ...subredditImages],
+      subreddit
+    );
   });
 
 program.parse(process.argv);
