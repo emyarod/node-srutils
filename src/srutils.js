@@ -83,15 +83,14 @@ program
         data,
       }))
       .catch(console.error);
-    const images = await rp({
-      headers: { 'User-Agent': userAgent },
-      url: `https://oauth.reddit.com/r/${subreddit}/about/stylesheet.json`,
+    const images = await r
+      .oauthRequest({
+        uri: `/r/${subreddit}/about/stylesheet.json`,
       json: true,
     })
-      .auth(null, null, true, keys.accessToken)
       .then(data =>
         Promise.all(
-          data.data.images.map(async e => ({
+          data.images.map(async e => ({
             name: `images/${e.name}.${e.url.split('.').slice(-1)[0]}`,
             data: await rp({ uri: e.url, encoding: null }),
           }))
