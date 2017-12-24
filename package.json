@@ -1,0 +1,99 @@
+{
+  "name": "node-srutils",
+  "version": "0.0.1",
+  "description": "Subreddit CSS tool for Reddit moderators",
+  "main": "lib/srutils.js",
+  "bin": {
+    "srutils": "lib/srutils.js"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "build": "npm run clean && babel src -d lib",
+    "clean": "rimraf lib",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublishOnly": "npm run build && echo '#!/usr/bin/env node' | cat - lib/cli.js > temp && mv temp lib/cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emyarod/node-srutils.git"
+  },
+  "keywords": [
+    "node",
+    "nodejs",
+    "reddit"
+  ],
+  "author": "emyarod",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/emyarod/node-srutils/issues"
+  },
+  "homepage": "https://github.com/emyarod/node-srutils#readme",
+  "dependencies": {
+    "archiver": "^2.1.0",
+    "babel-register": "^6.26.0",
+    "commander": "^2.12.2",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2",
+    "snoowrap": "^1.15.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.1",
+    "eslint": "^4.13.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-prettier": "^2.4.0",
+    "prettier": "^1.9.2",
+    "rimraf": "^2.6.2"
+  },
+  "babel": {
+    "presets": [
+      "env"
+    ],
+    "plugins": [
+      "transform-object-rest-spread",
+      "transform-runtime"
+    ]
+  },
+  "eslintConfig": {
+    "extends": "airbnb-base",
+    "plugins": [
+      "prettier"
+    ],
+    "rules": {
+      "quotes": [
+        "error",
+        "single",
+        {
+          "allowTemplateLiterals": true
+        }
+      ],
+      "comma-dangle": [
+        "error",
+        "always-multiline"
+      ],
+      "function-paren-newline": [
+        "error",
+        "consistent"
+      ],
+      "no-console": [
+        "warn",
+        {
+          "allow": [
+            "log",
+            "warn",
+            "error"
+          ]
+        }
+      ],
+      "arrow-parens": [
+        "warn",
+        "as-needed"
+      ]
+    }
+  }
+}
