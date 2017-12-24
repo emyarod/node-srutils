@@ -96,8 +96,13 @@ program
       .then(data =>
         Promise.all(
           data.images.map(async e => ({
-            name: `images/${e.name}.${e.url.split('.').slice(-1)[0]}`,
-            data: await rp({ uri: e.url, encoding: null }),
+            name: `stylesheet_images/${e.name}.${
+              e.url.split('.').slice(-1)[0]
+            }`,
+            data: await rp({
+              uri: e.url,
+              encoding: null,
+            }),
           }))
         )
       );
