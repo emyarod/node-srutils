@@ -17,7 +17,15 @@ const r = new Snoowrap({
 program.version(version);
 
 const backup = (files, subreddit) => {
-  const output = fs.createWriteStream(`${__dirname}/example.zip`);
+  const date = new Date();
+  const ISODate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+    .toISOString()
+    .slice(0, -5)
+    .split('T')
+    .reduce((p, c) => `${p}_${c.replace(/:/g, '-')}`, '');
+  const output = fs.createWriteStream(
+    `${__dirname}/${subreddit}${ISODate}.zip`
+  );
   const archive = archiver('zip', { zlib: { level: 9 } });
 
   output.on('close', () => {
@@ -44,9 +52,7 @@ const backup = (files, subreddit) => {
   archive.pipe(output);
 
   files.forEach(({ name, data }) =>
-    archive.append(data, {
-      name: `${subreddit}/${name}`,
-    })
+    archive.append(data, { name: `${subreddit}/${name}` })
   );
 
   archive.finalize();
