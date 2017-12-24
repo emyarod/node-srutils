@@ -76,24 +76,9 @@
         "error",
         "always-multiline"
       ],
-      "function-paren-newline": [
-        "error",
-        "consistent"
-      ],
-      "no-console": [
-        "warn",
-        {
-          "allow": [
-            "log",
-            "warn",
-            "error"
-          ]
-        }
-      ],
-      "arrow-parens": [
-        "warn",
-        "as-needed"
-      ]
+      "function-paren-newline": "off",
+      "no-console": "off",
+      "arrow-parens": "off"
     }
   }
 }
