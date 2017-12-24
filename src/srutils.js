@@ -8,9 +8,8 @@ import rp from 'request-promise';
 import { version } from '../package.json';
 import keys from '../opendoors.json';
 
-const userAgent = `Node.js:node-srutils:v${version} (by /u/fiveSeveN_)`;
 const r = new Snoowrap({
-  userAgent,
+  userAgent: `Node.js:node-srutils:v${version} (by /u/fiveSeveN_)`,
   ...keys,
 });
 
@@ -86,8 +85,8 @@ program
     const images = await r
       .oauthRequest({
         uri: `/r/${subreddit}/about/stylesheet.json`,
-      json: true,
-    })
+        json: true,
+      })
       .then(data =>
         Promise.all(
           data.images.map(async e => ({
