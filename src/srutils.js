@@ -88,7 +88,7 @@ program
         data,
       }))
       .catch(console.error);
-    const images = await r
+    const stylesheetImages = await r
       .oauthRequest({
         uri: `/r/${subreddit}/about/stylesheet.json`,
         json: true,
