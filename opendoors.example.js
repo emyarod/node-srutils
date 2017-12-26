@@ -1,4 +1,4 @@
-const keys = {
+export default {
   clientId: 'YOUR_CLIENTID_HERE',
   clientSecret: 'YOUR_CLIENTSECRET_HERE',
   /**
@@ -12,5 +12,3 @@ const keys = {
    */
   refreshToken: 'YOUR_REFRESHTOKEN_HERE',
 };
-
-export default keys;
