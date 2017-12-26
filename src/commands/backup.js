@@ -1,44 +1,131 @@
 import fs from 'fs';
-import archiver from 'archiver';
+import rp from 'request-promise';
+import JSZip from 'jszip';
 
-export default function backup(files, subreddit) {
+const createBackup = (files, subreddit) => {
   const date = new Date();
   const ISODate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
     .toISOString()
     .slice(0, -5)
     .split('T')
     .reduce((p, c) => `${p}_${c.replace(/:/g, '-')}`, '');
-  const output = fs.createWriteStream(
-    `${__dirname}/${subreddit}${ISODate}.zip`
+  const zip = new JSZip();
+  const archiveName = `./${subreddit}${ISODate}.zip`;
+  files.forEach(
+    ({ name, data }) =>
+      console.log(`Writing ${name} to archive...`) ||
+      zip.file(`${subreddit}/${name}`, data)
   );
-  const archive = archiver('zip', { zlib: { level: 9 } });
-
-  output.on('close', () => {
-    console.log(`${archive.pointer()} total bytes`);
-    console.log(
-      'archiver has been finalized and the output file descriptor has closed.'
-    );
-  });
-
-  output.on('end', () => console.log('Data has been drained'));
-
-  archive.on('warning', err => {
-    if (err.code === 'ENOENT') {
-      console.log(err);
-    } else {
+  zip
+    .generateNodeStream({
+      type: 'nodebuffer',
+      compression: 'DEFLATE',
+      compressionOptions: { level: 9 },
+      streamFiles: true,
+    })
+    .pipe(fs.createWriteStream(archiveName))
+    .on('error', err => {
       throw err;
-    }
-  });
+    })
+    .on('finish', () => console.log(`${archiveName} written`));
+};
 
-  archive.on('error', err => {
-    throw err;
-  });
+export default async function backup(r, subreddit) {
+  const settings = await r
+    .getSubreddit(subreddit)
+    .getSettings()
+    .then(
+      data =>
+        console.log('Saving subreddit settings...') || {
+          name: 'settings.json',
+          data: JSON.stringify(data, null, 2),
+        }
+    )
+    .catch(console.error);
+  const flair = await r
+    .getSubreddit(subreddit)
+    .getUserFlairTemplates()
+    .then(
+      data =>
+        console.log('Saving flair templates...') || {
+          name: 'flair.json',
+          data: JSON.stringify(data, null, 2),
+        }
+    )
+    .catch(console.error);
+  const stylesheet = await r
+    .getSubreddit(subreddit)
+    .getStylesheet()
+    .then(
+      data =>
+        console.log('Saving subreddit stylesheet...') || {
+          name: 'stylesheet.css',
+          data,
+        }
+    )
+    .catch(console.error);
+  const stylesheetImages = await r
+    .oauthRequest({
+      uri: `/r/${subreddit}/about/stylesheet.json`,
+      json: true,
+    })
+    .then(
+      data =>
+        console.log('Saving stylesheet images...') ||
+        Promise.all(
+          data.images.map(async e => ({
+            name: `stylesheet_images/${e.name}.${
+              e.url.split('.').slice(-1)[0]
+            }`,
+            data: await rp({
+              uri: e.url,
+              encoding: null,
+            }),
+          }))
+        )
+    );
+  const subredditImages = await r
+    .oauthRequest({
+      uri: `/r/${subreddit}/about.json`,
+      json: true,
+    })
+    .then(
+      data =>
+        console.log('Saving subreddit images...') ||
+        Promise.resolve(
+          [
+            {
+              name: 'mobile_banner',
+              url: data.banner_img,
+            },
+            {
+              name: 'mobile_icon',
+              url: data.icon_img,
+            },
+            {
+              name: 'subreddit_header',
+              url: data.header_img,
+            },
+          ].reduce(
+            async (p, c) =>
+              c.url
+                ? [
+                    ...p,
+                    {
+                      name: `subreddit_images/${c.name}.${
+                        c.url.split('.').slice(-1)[0]
+                      }`,
+                      data: await rp({ uri: c.url, encoding: null }),
+                    },
+                  ]
+                : p,
+            []
+          )
+        )
+    );
 
-  archive.pipe(output);
-
-  files.forEach(({ name, data }) =>
-    archive.append(data, { name: `${subreddit}/${name}` })
+  createBackup(
+    [settings, flair, stylesheet, ...stylesheetImages, ...subredditImages],
+    subreddit
   );
-
-  archive.finalize();
 }

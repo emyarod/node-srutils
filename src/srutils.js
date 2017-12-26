@@ -2,7 +2,6 @@
 
 import program from 'commander';
 import Snoowrap from 'snoowrap';
-import rp from 'request-promise';
 import { version } from '../package.json';
 import keys from '../opendoors.json';
 
@@ -15,95 +14,13 @@ const r = new Snoowrap({
 program.version(version);
 
 program
-  .command('backup <subreddit> [options]')
-  .description(`Backup a subreddit's settings and styles to a zipped archive`)
-  .action(async (arg, options) => {
-    console.log('sub', arg, 'opt', options);
+  .command('backup <subreddit>')
+  .description(
+    `Creates a zip archive containing a subreddit's settings and styles.`
+  )
+  .action(arg => {
     const [, subreddit] = arg.split('/');
-    const settings = await r
-      .getSubreddit(subreddit)
-      .getSettings()
-      .then(data => ({
-        name: 'settings.json',
-        data: JSON.stringify(data, null, 2),
-      }))
-      .catch(console.error);
-    const flair = await r
-      .getSubreddit(subreddit)
-      .getUserFlairTemplates()
-      .then(data => ({
-        name: 'flair.json',
-        data: JSON.stringify(data, null, 2),
-      }))
-      .catch(console.error);
-    const stylesheet = await r
-      .getSubreddit(subreddit)
-      .getStylesheet()
-      .then(data => ({
-        name: 'stylesheet.css',
-        data,
-      }))
-      .catch(console.error);
-    const stylesheetImages = await r
-      .oauthRequest({
-        uri: `/r/${subreddit}/about/stylesheet.json`,
-        json: true,
-      })
-      .then(data =>
-        Promise.all(
-          data.images.map(async e => ({
-            name: `stylesheet_images/${e.name}.${
-              e.url.split('.').slice(-1)[0]
-            }`,
-            data: await rp({
-              uri: e.url,
-              encoding: null,
-            }),
-          }))
-        )
-      );
-    const subredditImages = await r
-      .oauthRequest({
-        uri: `/r/${subreddit}/about.json`,
-        json: true,
-      })
-      .then(data =>
-        Promise.resolve(
-          [
-            {
-              name: 'mobile_banner',
-              url: data.banner_img,
-            },
-            {
-              name: 'mobile_icon',
-              url: data.icon_img,
-            },
-            {
-              name: 'subreddit_header',
-              url: data.header_img,
-            },
-          ].reduce(
-            async (p, c) =>
-              c.url
-                ? [
-                    ...p,
-                    {
-                      name: `subreddit_images/${c.name}.${
-                        c.url.split('.').slice(-1)[0]
-                      }`,
-                      data: await rp({ uri: c.url, encoding: null }),
-                    },
-                  ]
-                : p,
-            []
-          )
-        )
-      );
-
-    backup(
-      [settings, flair, stylesheet, ...stylesheetImages, ...subredditImages],
-      subreddit
-    );
+    backup(r, subreddit);
   });
 
 program.parse(process.argv);
