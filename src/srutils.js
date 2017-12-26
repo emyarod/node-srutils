@@ -3,7 +3,8 @@
 import program from 'commander';
 import Snoowrap from 'snoowrap';
 import { version } from '../package.json';
-import keys from '../opendoors.json';
+import keys from '../opendoors';
+import { backup } from './commands';
 
 const r = new Snoowrap({
   userAgent: `Node.js:node-srutils:v${version} (by /u/fiveSeveN_)`,
