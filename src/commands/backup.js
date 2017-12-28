@@ -64,6 +64,14 @@ export default async function backup(r, subreddit) {
         }
     )
     .catch(console.error);
+  const createStylesheetImageArray = imagesInfo =>
+    console.log('Saving stylesheet image array...') ||
+    new Promise(resolve => {
+      resolve({
+        name: `stylesheet_image_array.json`,
+        data: JSON.stringify(imagesInfo),
+      });
+    });
   const stylesheetImages = await r
     .oauthRequest({
       uri: `/r/${subreddit}/about/stylesheet.json`,
@@ -72,8 +80,8 @@ export default async function backup(r, subreddit) {
     .then(
       data =>
         console.log('Saving stylesheet images...') ||
-        Promise.all(
-          data.images.map(async e => ({
+        Promise.all([
+          ...data.images.map(async e => ({
             name: `stylesheet_images/${e.name}.${
               e.url.split('.').slice(-1)[0]
             }`,
@@ -81,8 +89,9 @@ export default async function backup(r, subreddit) {
               uri: e.url,
               encoding: null,
             }),
-          }))
-        )
+          })),
+          createStylesheetImageArray(data.images),
+        ])
     );
   const subredditImages = await r
     .oauthRequest({
