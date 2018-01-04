@@ -1,3 +1,4 @@
 import backup from './backup';
+import restore from './restore';
 
-export { backup };
+export { backup, restore };

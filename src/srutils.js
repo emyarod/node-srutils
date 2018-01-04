@@ -4,7 +4,7 @@ import program from 'commander';
 import Snoowrap from 'snoowrap';
 import { version } from '../package.json';
 import keys from '../opendoors';
-import { backup } from './commands';
+import { backup, restore } from './commands';
 
 const r = new Snoowrap({
   userAgent: `Node.js:node-srutils:v${version} (by /u/fiveSeveN_)`,
@@ -23,5 +23,12 @@ program
     const [, subreddit] = arg.split('/');
     backup(r, subreddit);
   });
+
+program
+  .command('restore <archive>')
+  .description(
+    `Restores a subreddit's settings and styles from a backup zip archive.`
+  )
+  .action(archive => restore(r, archive));
 
 program.parse(process.argv);

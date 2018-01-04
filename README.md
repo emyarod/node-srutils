@@ -10,6 +10,14 @@
 
 ### restore
 
+Restores a subreddit's settings and styles from a backup zip archive.
+
+```
+node-srutils restore valid_node_srutils_subreddit_backup.zip
+```
+
+Includes subreddit stylesheet, images, sidebar content, and flair templates.
+
 ## Development
 
 ```
