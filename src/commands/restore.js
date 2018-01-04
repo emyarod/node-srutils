@@ -19,6 +19,10 @@ const restoreUserFlairTemplates = (r, subreddit, flair) =>
       })
   );
 const restoreStylesheet = (r, subreddit, stylesheetImagesArray, stylesheet) => {
+  /**
+   * Replace stylesheet image URL with reddit percent formatted URLs
+   * https://stackoverflow.com/a/10726800
+   */
   const replacementMap = stylesheetImagesArray.reduce(
     (p, c) => ({
       ...p,
