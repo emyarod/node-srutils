@@ -2,6 +2,7 @@
 
 import program from 'commander';
 import Snoowrap from 'snoowrap';
+import rimraf from 'rimraf';
 import { version } from '../package.json';
 import keys from '../opendoors';
 import { backup, restore } from './commands';
@@ -32,3 +33,8 @@ program
   .action(archive => restore(r, archive));
 
 program.parse(process.argv);
+process.on('exit', () => {
+  console.log('Deleting temporary files...');
+  rimraf.sync('tmp');
+  console.log('Exiting...');
+});
