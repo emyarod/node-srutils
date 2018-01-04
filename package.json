@@ -31,9 +31,9 @@
   },
   "homepage": "https://github.com/emyarod/node-srutils#readme",
   "dependencies": {
-    "archiver": "^2.1.0",
     "babel-register": "^6.26.0",
     "commander": "^2.12.2",
+    "jszip": "^3.1.5",
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
     "snoowrap": "^1.15.1"
@@ -82,7 +82,8 @@
       ],
       "function-paren-newline": "off",
       "no-console": "off",
-      "arrow-parens": "off"
+      "arrow-parens": "off",
+      "no-underscore-dangle": "off"
     }
   }
 }
