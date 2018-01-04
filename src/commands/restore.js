@@ -54,57 +54,67 @@ const restoreStylesheet = (r, subreddit, stylesheetImagesArray, stylesheet) => {
 //       .uploadSubredditImage({ name, imageType, file: image.data });
 //   });
 const restoreStylesheetImages = (r, subreddit, stylesheetImages) =>
-  stylesheetImages.forEach(({ name: filename, path: file }) => {
-    const [name, imageType] = filename.split('.');
-    console.log(`Uploading ${filename}...`);
-    r
-      .getSubreddit(subreddit)
-      .uploadStylesheetImage({
-        name,
-        imageType,
-        file,
-      })
-      .then(() => fs.unlinkSync(file))
-      .catch(console.error);
-  });
+  Promise.all(
+    stylesheetImages.map(async ({ name: filename, path: file }) => {
+      const [name, imageType] = filename.split('.');
+      console.log(`Uploading ${filename}...`);
+      return r
+        .getSubreddit(subreddit)
+        .uploadStylesheetImage({
+          name,
+          imageType,
+          file,
+        })
+        .catch(console.error);
+    })
+  )
+    .then(data => data)
+    .catch(console.error);
 const restoreSubredditImages = (
   r,
   subreddit,
   { header = null, icon = null, banner = null }
 ) => {
+  const promises = [];
   if (header) {
     console.log('Restoring subreddit header image...');
-    r
-      .getSubreddit(subreddit)
-      .uploadHeaderImage({
-        imageType: header.extension,
-        file: header.path,
-      })
-      .then(() => fs.unlinkSync(header.path))
-      .catch(console.error);
+    promises.push(
+      r
+        .getSubreddit(subreddit)
+        .uploadHeaderImage({
+          imageType: header.extension,
+          file: header.path,
+        })
+        .catch(console.error)
+    );
   }
   if (icon) {
     console.log('Restoring subreddit icon image...');
-    r
-      .getSubreddit(subreddit)
-      .uploadIcon({
-        imageType: icon.extension,
-        file: icon.path,
-      })
-      .then(() => fs.unlinkSync(icon.path))
-      .catch(console.error);
+    promises.push(
+      r
+        .getSubreddit(subreddit)
+        .uploadIcon({
+          imageType: icon.extension,
+          file: icon.path,
+        })
+        .catch(console.error)
+    );
   }
   if (banner) {
     console.log('Restoring subreddit banner image...');
-    r
-      .getSubreddit(subreddit)
-      .uploadBannerImage({
-        imageType: banner.extension,
-        file: banner.path,
-      })
-      .then(() => fs.unlinkSync(banner.path))
-      .catch(console.error);
+    promises.push(
+      r
+        .getSubreddit(subreddit)
+        .uploadBannerImage({
+          imageType: banner.extension,
+          file: banner.path,
+        })
+        .catch(console.error)
+    );
   }
+  return Promise.all(promises)
+    .then(data => data)
+    .catch(console.error);
 };
 
 export default function restore(r, archive) {
@@ -202,14 +212,17 @@ export default function restore(r, archive) {
         );
         restoreSettings(r, subreddit, JSON.parse(settings));
         restoreUserFlairTemplates(r, subreddit, JSON.parse(flair));
-        restoreStylesheet(r, subreddit, stylesheetImagesArray, stylesheet);
         restoreStylesheetImages(r, subreddit, stylesheetImages);
-        restoreSubredditImages(r, subreddit, subredditImages);
 
-        // TODO: delete temp files
-        // fs.unlinkSync('tmp');
-        // console.log('tmp deleted');
-
+        // restore stylesheet last to avoid errors with missing images
+        Promise.all([
+          restoreStylesheetImages(r, subreddit, stylesheetImages),
+          restoreSubredditImages(r, subreddit, subredditImages),
+        ])
+          .then(() =>
+            restoreStylesheet(r, subreddit, stylesheetImagesArray, stylesheet)
+          )
+          .catch(console.error);
         if (!settings || !flair || !stylesheet) {
           throw Error(`${archive} is not a valid subreddit backup`);
         }
