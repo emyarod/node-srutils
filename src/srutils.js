@@ -2,6 +2,7 @@
 
 import program from 'commander';
 import Snoowrap from 'snoowrap';
+import fs from 'fs';
 import rimraf from 'rimraf';
 import { version } from '../package.json';
 import keys from '../opendoors';
@@ -34,7 +35,9 @@ program
 
 program.parse(process.argv);
 process.on('exit', () => {
-  console.log('Deleting temporary files...');
-  rimraf.sync('tmp');
+  if (fs.existsSync('tmp')) {
+    console.log('Deleting temporary files...');
+    rimraf.sync('tmp');
+  }
   console.log('Exiting...');
 });
