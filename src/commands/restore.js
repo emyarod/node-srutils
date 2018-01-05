@@ -212,7 +212,6 @@ export default function restore(r, archive) {
         );
         restoreSettings(r, subreddit, JSON.parse(settings));
         restoreUserFlairTemplates(r, subreddit, JSON.parse(flair));
-        restoreStylesheetImages(r, subreddit, stylesheetImages);
 
         // restore stylesheet last to avoid errors with missing images
         Promise.all([
