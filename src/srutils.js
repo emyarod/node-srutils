@@ -21,8 +21,8 @@ program
   .description(
     `Creates a zip archive containing a subreddit's settings and styles.`
   )
-  .action(arg => {
-    const [, subreddit] = arg.split('/');
+  .action(sub => {
+    const [, subreddit] = sub.split('/');
     backup(r, subreddit);
   });
 
