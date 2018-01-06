@@ -42,6 +42,7 @@ export default async function backup(r, subreddit) {
         }
     )
     .catch(console.error);
+  // TODO: backup about/flair settings and link flair templates
   const flair = await r
     .getSubreddit(subreddit)
     .getUserFlairTemplates()

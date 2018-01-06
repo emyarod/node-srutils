@@ -7,6 +7,7 @@ const restoreSettings = (r, subreddit, settings) =>
     .getSubreddit(subreddit)
     // https://github.com/not-an-aardvark/snoowrap/issues/126#issuecomment-355722120
     .editSettings({ ...settings, type: settings.subreddit_type });
+// TODO: restore about/flair settings and link flair templates
 const restoreUserFlairTemplates = (r, subreddit, flair) =>
   console.log('Restoring user flair templates...') ||
   flair.forEach(
