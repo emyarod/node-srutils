@@ -30,7 +30,7 @@ const restoreStylesheet = (r, subreddit, stylesheetImagesArray, stylesheet) => {
   const replacementMap = stylesheetImagesArray.reduce(
     (p, c) => ({
       ...p,
-      [`url("${c.url.replace(/https:/, '')}")`]: c.link,
+      [`url("${c.url.replace(/(https|http):/, '')}")`]: c.link,
     }),
     {}
   );
