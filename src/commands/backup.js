@@ -64,7 +64,13 @@ export default async function backup(r, subreddit) {
           data,
         }
     )
-    .catch(console.error);
+    .catch(
+      () =>
+        console.error('This subreddit does not have a custom stylesheet!') || {
+          name: 'stylesheet.css',
+          data: '',
+        }
+    );
   const createStylesheetImageArray = imagesInfo =>
     console.log('Saving stylesheet image array...') ||
     new Promise(resolve => {
