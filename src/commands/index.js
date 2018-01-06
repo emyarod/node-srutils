@@ -1,4 +1,5 @@
+import reset from './reset';
 import backup from './backup';
 import restore from './restore';
 
-export { backup, restore };
+export { reset, backup, restore };

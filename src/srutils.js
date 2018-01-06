@@ -6,7 +6,7 @@ import fs from 'fs';
 import rimraf from 'rimraf';
 import { version } from '../package.json';
 import keys from '../opendoors';
-import { backup, restore } from './commands';
+import { reset, backup, restore } from './commands';
 
 const r = new Snoowrap({
   userAgent: `Node.js:node-srutils:v${version} (by /u/fiveSeveN_)`,
@@ -15,6 +15,16 @@ const r = new Snoowrap({
 
 // TODO: help and options
 program.version(version);
+
+program
+  .command('reset <subreddit> [filters]')
+  .description(
+    `Resets a subreddit's default settings and stylesheet. Must have  appropriate permissions to modify subreddit. Filters may be "all" (by  default) to clear all data, or any combination of "css", "images", "header", "icon", "banner", "settings", and "flair".`
+  )
+  .action((sub, filters) => {
+    const [, subreddit] = sub.split('/');
+    reset(r, subreddit, filters);
+  });
 
 program
   .command('backup <subreddit>')
