@@ -3,7 +3,10 @@ import JSZip from 'jszip';
 
 const restoreSettings = (r, subreddit, settings) =>
   console.log('Restoring settings...') ||
-  r.getSubreddit(subreddit).editSettings(settings);
+  r
+    .getSubreddit(subreddit)
+    // https://github.com/not-an-aardvark/snoowrap/issues/126#issuecomment-355722120
+    .editSettings({ ...settings, type: settings.subreddit_type });
 const restoreUserFlairTemplates = (r, subreddit, flair) =>
   console.log('Restoring user flair templates...') ||
   flair.forEach(
