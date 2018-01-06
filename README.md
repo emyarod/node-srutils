@@ -8,6 +8,14 @@
 
 ### backup
 
+Creates a zip archive containing a subreddit's settings and styles.
+
+```
+node-srutils backup /r/example
+```
+
+Includes subreddit stylesheet, images, sidebar content, and flair templates.
+
 ### restore
 
 Restores a subreddit's settings and styles from a backup zip archive.
