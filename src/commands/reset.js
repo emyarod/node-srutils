@@ -75,12 +75,10 @@ const resetFlair = (r, subreddit) => {
 };
 
 export default function reset(r, subreddit, filterString = 'all') {
-  console.log(subreddit, filterString);
   const filters = filterString
     .toLowerCase()
     .split(',')
     .reduce((p, c) => ({ ...p, [c]: true }), {});
-  console.log(filters);
   if (filters.all) {
     ['css', 'images', 'header', 'icon', 'banner', 'settings', 'flair'].forEach(
       filter => {
