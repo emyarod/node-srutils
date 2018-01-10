@@ -18,6 +18,14 @@ The filters allow you to selectively reset parts of the subreddit. Filters may b
 
 ### clone
 
+Clones the stylesheet and settings from one subreddit to another.
+
+```
+node-srutils clone /r/from /r/to
+```
+
+Settings and styles will first be reset to default in the destination subreddit, and then populated with the settings and styles from the source subreddit. You must be a moderator of the destination subreddit, and you must be able to view the styles and settings of the target subreddit.
+
 ### backup
 
 Creates a zip archive containing a subreddit's settings and styles.

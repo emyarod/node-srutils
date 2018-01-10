@@ -6,7 +6,7 @@ import fs from 'fs';
 import rimraf from 'rimraf';
 import { version } from '../package.json';
 import keys from '../opendoors';
-import { reset, backup, restore } from './commands';
+import { clone, reset, backup, restore } from './commands';
 
 const r = new Snoowrap({
   userAgent: `Node.js:node-srutils:v${version} (by /u/fiveSeveN_)`,
@@ -15,6 +15,18 @@ const r = new Snoowrap({
 
 // TODO: help and options
 program.version(version);
+
+program
+  .command('clone <from> <to>')
+  .description(
+    `Clones the settings and stylesheet from a subreddit to another. All settings and styles will be reset in the destination subreddit and then replaced with the settings and styles from the source subreddit. Must be a moderator of the destination subreddit, and the target subreddit must be visible to you.`
+  )
+  .action((src, dest) => {
+    const [, from] = src.split('/');
+    const [, to] = dest.split('/');
+    reset(r, to, 'all');
+    clone(r, from, to);
+  });
 
 program
   .command('reset <subreddit> [filters]')
