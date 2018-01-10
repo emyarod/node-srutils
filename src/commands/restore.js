@@ -1,51 +1,13 @@
 import fs from 'fs';
 import JSZip from 'jszip';
+import {
+  editSettings as restoreSettings,
+  createUserFlairTemplates as restoreUserFlairTemplates,
+  updateStylesheet as restoreStylesheet,
+} from '../_util';
 
-const restoreSettings = (r, subreddit, settings) =>
-  console.log('Restoring settings...') ||
-  r
-    .getSubreddit(subreddit)
-    // https://github.com/not-an-aardvark/snoowrap/issues/126#issuecomment-355722120
-    .editSettings({ ...settings, type: settings.subreddit_type });
 // TODO: restore about/flair settings and link flair templates
-const restoreUserFlairTemplates = (r, subreddit, flair) =>
-  console.log('Restoring user flair templates...') ||
-  flair.forEach(
-    ({
-      flair_text: text,
-      flair_css_class: cssClass,
-      flair_text_editable: textEditable,
-    }) =>
-      r.getSubreddit(subreddit).createUserFlairTemplate({
-        text,
-        cssClass,
-        textEditable,
-      })
-  );
-const restoreStylesheet = (r, subreddit, stylesheetImagesArray, stylesheet) => {
-  /**
-   * Replace stylesheet image URL with reddit percent formatted URLs
-   * https://stackoverflow.com/a/10726800
-   */
-  const replacementMap = stylesheetImagesArray.reduce(
-    (p, c) => ({
-      ...p,
-      [`url("${c.url.replace(/(https|http):/, '')}")`]: c.link,
-    }),
-    {}
-  );
-  const regex = new RegExp(
-    Object.keys(replacementMap)
-      .map(e => e.replace(/[-[\]/{}()*+?.\\^$|]/g, '\\$&'))
-      .join('|'),
-    'g'
-  );
-  console.log('Restoring stylesheet...');
-  return r.getSubreddit(subreddit).updateStylesheet({
-    css: stylesheet.replace(regex, match => replacementMap[match]),
-    reason: 'node-srutils restore',
-  });
-};
+
 // FIXME: figure out how to pass in Readable stream to snoowrap
 // https://github.com/not-an-aardvark/snoowrap/issues/122
 // const restoreStylesheetImages = (r, subreddit, stylesheetImages) =>
@@ -214,7 +176,9 @@ export default function restore(r, archive) {
           },
           Promise.resolve({})
         );
+        console.log('Restoring settings...');
         restoreSettings(r, subreddit, JSON.parse(settings));
+        console.log('Restoring user flair templates...');
         restoreUserFlairTemplates(r, subreddit, JSON.parse(flair));
 
         // restore stylesheet last to avoid errors with missing images
@@ -223,7 +187,13 @@ export default function restore(r, archive) {
           restoreSubredditImages(r, subreddit, subredditImages),
         ])
           .then(() =>
-            restoreStylesheet(r, subreddit, stylesheetImagesArray, stylesheet)
+            restoreStylesheet(
+              r,
+              subreddit,
+              stylesheetImagesArray,
+              stylesheet,
+              'Restoring stylesheet'
+            )
           )
           .catch(console.error);
         if (!settings || !flair || !stylesheet) {
