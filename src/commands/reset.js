@@ -4,7 +4,6 @@ const resetStylesheet = (r, subreddit) =>
     css: '',
     reason: 'node-srutils reset',
   });
-
 const clearStylesheetImages = async (r, subreddit) => {
   console.log('Clearing stylesheet images...');
   const stylesheet = await r
@@ -18,16 +17,16 @@ const clearStylesheetImages = async (r, subreddit) => {
       )
     );
   if (stylesheet && stylesheet.images.length) {
-    stylesheet.images.forEach(({ url, name: imageName }) => {
-      console.log(`Deleting ${imageName}.${url.split('.').slice(-1)}`);
-      r
-        .getSubreddit(subreddit)
-        .deleteImage({ imageName })
-        .catch(console.error);
-    });
+    stylesheet.images.forEach(
+      ({ url, name: imageName }) =>
+        console.log(`Deleting ${imageName}.${url.split('.').slice(-1)}`) ||
+        r
+          .getSubreddit(subreddit)
+          .deleteImage({ imageName })
+          .catch(console.error)
+    );
   }
 };
-
 const resetSettings = (r, subreddit) =>
   console.log('Resetting settings...') ||
   r.getSubreddit(subreddit).editSettings({
@@ -58,7 +57,6 @@ const resetSettings = (r, subreddit) =>
     suggested_comment_sort: '',
     spoilers_enabled: false,
   });
-
 const resetFlair = (r, subreddit) => {
   console.log('Configuring default flair options...');
   r.getSubreddit(subreddit).configure_flair({
