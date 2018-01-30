@@ -4,6 +4,7 @@ import program from 'commander';
 import Snoowrap from 'snoowrap';
 import fs from 'fs';
 import rimraf from 'rimraf';
+import didyoumean from 'didyoumean';
 import { version } from '../package.json';
 import keys from '../opendoors';
 import { clone, reset, backup, restore } from './commands';
@@ -54,6 +55,17 @@ program
     `Restores a subreddit's settings and styles from a backup zip archive.`
   )
   .action(archive => restore(r, archive));
+
+program.command('*').action(command => {
+  console.error(`Unknown command: ${command}`);
+  const commandNames = program.commands.reduce(
+    (p, c) => (c._name !== '*' ? [...p, c._name] : p),
+    []
+  );
+  const closeMatch = didyoumean(command, commandNames);
+  if (closeMatch) console.error(`Did you mean ${closeMatch}?`);
+  process.exit(1);
+});
 
 program.parse(process.argv);
 process.on('exit', () => {
