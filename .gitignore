@@ -58,7 +58,7 @@ typings/
 .env
 
 # API Keys
-opendoors.js
+opendoors.json
 
 # lib
 lib
