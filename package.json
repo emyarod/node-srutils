@@ -6,24 +6,20 @@
   "bin": {
     "srutils": "lib/srutils.js"
   },
-  "files": [
-    "lib"
-  ],
+  "files": ["lib"],
   "scripts": {
+    "precommit": "lint-staged",
     "build": "npm run clean && babel src -d lib",
     "clean": "rimraf lib",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepublishOnly": "npm run build && echo '#!/usr/bin/env node' | cat - lib/cli.js > temp && mv temp lib/cli.js"
+    "prepublishOnly":
+      "npm run build && echo '#!/usr/bin/env node' | cat - lib/cli.js > temp && mv temp lib/cli.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/emyarod/node-srutils.git"
   },
-  "keywords": [
-    "node",
-    "nodejs",
-    "reddit"
-  ],
+  "keywords": ["node", "nodejs", "reddit"],
   "author": "emyarod",
   "license": "MIT",
   "bugs": {
@@ -51,25 +47,17 @@
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-prettier": "^2.4.0",
+    "husky": "^0.14.3",
+    "lint-staged": "^7.0.0",
     "prettier": "^1.9.2"
   },
   "babel": {
-    "presets": [
-      "env"
-    ],
-    "plugins": [
-      "transform-object-rest-spread",
-      "transform-runtime"
-    ]
+    "presets": ["env"],
+    "plugins": ["transform-object-rest-spread", "transform-runtime"]
   },
   "eslintConfig": {
-    "extends": [
-      "airbnb-base",
-      "prettier"
-    ],
-    "plugins": [
-      "prettier"
-    ],
+    "extends": ["airbnb-base", "prettier"],
+    "plugins": ["prettier"],
     "rules": {
       "quotes": [
         "error",
@@ -78,14 +66,17 @@
           "allowTemplateLiterals": true
         }
       ],
-      "comma-dangle": [
-        "error",
-        "always-multiline"
-      ],
+      "comma-dangle": ["error", "always-multiline"],
       "function-paren-newline": "off",
       "no-console": "off",
       "arrow-parens": "off",
       "no-underscore-dangle": "off"
     }
+  },
+  "lint-staged": {
+    "*.{js,json}": [
+      "prettier --single-quote --trailing-comma=es5 --write",
+      "git add"
+    ]
   }
 }
