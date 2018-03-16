@@ -1,6 +1,6 @@
 {
   "name": "node-srutils",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Subreddit CSS tool for Reddit moderators",
   "main": "lib/srutils.js",
   "bin": {
