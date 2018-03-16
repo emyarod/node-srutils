@@ -77,9 +77,6 @@
     }
   },
   "lint-staged": {
-    "*.{js,json}": [
-      "prettier --single-quote --trailing-comma=es5 --write",
-      "git add"
-    ]
+    "*.{js,json}": ["prettier --single-quote --trailing-comma=es5 --write"]
   }
 }
