@@ -2,6 +2,14 @@
 
 ## Commands
 
+### config
+
+Create a configuration file which contains OAuth credentials. Follow the prompts and provide the required information (client key, client secret, and refresh token). For more information on obtaining the required credentials, you can visit https://github.com/reddit-archive/reddit/wiki/OAuth2-Quick-Start-Example#first-steps and https://not-an-aardvark.github.io/reddit-oauth-helper/ for more information.
+
+```
+node-srutils config
+```
+
 ### reset
 
 Resets a subreddit's settings and stylesheet back to default. You must be a moderator of the subreddit to run this command.
@@ -45,6 +53,22 @@ node-srutils restore valid_node_srutils_subreddit_backup.zip
 ```
 
 Includes subreddit stylesheet, images, sidebar content, and flair templates.
+
+## Authenticating
+
+To use this tool, you must authenticate to the Reddit API, and there are two methods to do this:
+
+### Username/password authentication
+
+Pass in your reddit username and password as options in the command line. If you have 2-Factor Authentication enabled, append your 2FA code to the end of your password with a colon (password:code).
+
+```
+node-srutils backup /r/<subreddit> --username <reddit-username> --password <reddit-password>
+```
+
+### OAuth
+
+With the `config` command, you can save your OAuth credentials to avoid having to authenticate manually on each run of the script.
 
 ## Development
 
