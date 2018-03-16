@@ -16,8 +16,7 @@
     "build": "npm run clean && babel src -d lib",
     "clean": "rimraf lib",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepublishOnly":
-      "npm run build && echo '#!/usr/bin/env node' | cat - lib/cli.js > temp && mv temp lib/cli.js"
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
