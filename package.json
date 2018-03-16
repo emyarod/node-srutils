@@ -7,6 +7,9 @@
     "node-srutils": "lib/srutils.js"
   },
   "files": ["lib"],
+  "engines": {
+    "node": ">=8.0.0"
+  },
   "scripts": {
     "precommit": "lint-staged",
     "postinstall": "echo '{}' > opendoors.json",
