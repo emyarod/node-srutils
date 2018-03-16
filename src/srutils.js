@@ -28,6 +28,7 @@ if (process.argv.length === 2) {
  * (b) clientId, clientSecret, username, password
  */
 if (
+  !program.args.includes('config') &&
   (!keys.clientId || !keys.clientSecret) &&
   (!keys.refreshToken || !(program.username && program.password))
 ) {
@@ -37,12 +38,15 @@ if (
   process.exit(1);
 }
 
-const r = new Snoowrap({
-  userAgent: `Node.js:node-srutils:v${version} (by /u/fiveSeveN_)`,
-  username: program.username,
-  password: program.password,
-  ...keys,
-});
+// define snoowrap only if current command is not `config`
+const r =
+  program.args.includes('config') ||
+  new Snoowrap({
+    userAgent: `Node.js:node-srutils:v${version} (by /u/fiveSeveN_)`,
+    username: program.username,
+    password: program.password,
+    ...keys,
+  });
 
 program
   .command('config')
