@@ -4,7 +4,7 @@
 
 ### config
 
-Create a configuration file which contains OAuth credentials. Follow the prompts and provide the required information (client key, client secret, and refresh token). For more information on obtaining the required credentials, you can visit https://github.com/reddit-archive/reddit/wiki/OAuth2-Quick-Start-Example#first-steps and https://not-an-aardvark.github.io/reddit-oauth-helper/ for more information.
+Create a configuration file which contains OAuth credentials. Follow the prompts and provide the required information (client key, client secret, and optional refresh token). For more information on obtaining the required credentials, you can visit https://github.com/reddit-archive/reddit/wiki/OAuth2-Quick-Start-Example#first-steps and https://not-an-aardvark.github.io/reddit-oauth-helper/ for more information.
 
 ```
 node-srutils config
@@ -56,7 +56,12 @@ Includes subreddit stylesheet, images, sidebar content, and flair templates.
 
 ## Authenticating
 
-To use this tool, you must authenticate to the Reddit API, and there are two methods to do this:
+To use this tool, you must authenticate to the Reddit API. You must provide either:
+
+* (a) clientId, clientSecret, refreshToken
+* (b) clientId, clientSecret, username, password
+
+To store the client ID and client secret token in the configuration file, you must run the `config` command. You can choose to enter either a refresh token in the `config` command or provide username and password on the command line.
 
 ### Username/password authentication
 
@@ -68,7 +73,7 @@ node-srutils backup /r/<subreddit> --username <reddit-username> --password <redd
 
 ### OAuth
 
-With the `config` command, you can save your OAuth credentials to avoid having to authenticate manually on each run of the script.
+With the `config` command, you can save your OAuth refresh token to avoid having to authenticate manually on each run of the script.
 
 ## Development
 
