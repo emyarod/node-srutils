@@ -4,7 +4,7 @@
   "description": "Subreddit CSS tool for Reddit moderators",
   "main": "lib/srutils.js",
   "bin": {
-    "srutils": "lib/srutils.js"
+    "node-srutils": "lib/srutils.js"
   },
   "files": ["lib"],
   "scripts": {
