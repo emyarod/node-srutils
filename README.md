@@ -17,9 +17,16 @@ Pass in your reddit username and password as options in the command line. If you
 node-srutils backup /r/<subreddit> --username <reddit-username> --password <reddit-password>
 ```
 
-### OAuth
+### Refresh token
 
-With the `config` command, you can save your OAuth refresh token to avoid having to authenticate manually on each run of the script.
+With the `config` command, you can save your OAuth refresh token to avoid having to authenticate manually on each run of the script. Your refresh token requires the following scopes:
+
+* flair
+* modconfig
+* modflair
+* mysubreddits
+* read
+* structuredstyles
 
 ## Commands
 
