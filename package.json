@@ -9,6 +9,7 @@
   "files": ["lib"],
   "scripts": {
     "precommit": "lint-staged",
+    "postinstall": "echo '{}' > opendoors.json",
     "build": "npm run clean && babel src -d lib",
     "clean": "rimraf lib",
     "test": "echo \"Error: no test specified\" && exit 1",
