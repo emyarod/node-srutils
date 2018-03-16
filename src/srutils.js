@@ -22,11 +22,14 @@ if (process.argv.length === 2) {
   program.help();
 }
 
+/**
+ * You must provide either:
+ * (a) clientId, clientSecret, refreshToken
+ * (b) clientId, clientSecret, username, password
+ */
 if (
-  !(
-    (keys.clientId && keys.clientSecret && keys.refreshToken) ||
-    (program.username && program.password)
-  )
+  (!keys.clientId || !keys.clientSecret) &&
+  (!keys.refreshToken || !(program.username && program.password))
 ) {
   console.log(
     'Reddit credentials required. Provide username and password via flags, or create a configuration file to save your OAuth credentials. Check the help menu for more information on how to provide credentials.'
@@ -36,6 +39,8 @@ if (
 
 const r = new Snoowrap({
   userAgent: `Node.js:node-srutils:v${version} (by /u/fiveSeveN_)`,
+  username: program.username,
+  password: program.password,
   ...keys,
 });
 

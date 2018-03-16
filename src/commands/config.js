@@ -21,8 +21,7 @@ export default async function config() {
   });
   const refreshToken = await getCredential({
     rl,
-    prompt:
-      'Enter your reddit refresh token (you can generate one here https://not-an-aardvark.github.io/reddit-oauth-helper/). Make sure your token contains the following scopes (flair, modconfig, modflair, mysubreddits, read, structuredstyles): ',
+    prompt: `Enter your reddit refresh token (you can generate one here https://not-an-aardvark.github.io/reddit-oauth-helper/). Make sure your token contains the following scopes (flair, modconfig, modflair, mysubreddits, read, structuredstyles). Or press 'Enter' to skip this step: `,
   });
   rl.close();
   fs.writeFileSync(
