@@ -1,5 +1,26 @@
 # node-srutils
 
+## Authenticating
+
+To use this tool, you must authenticate to the Reddit API. You must provide either:
+
+* (a) clientId, clientSecret, refreshToken
+* (b) clientId, clientSecret, username, password
+
+To store the client ID and client secret token in the configuration file, you must run the `config` command. You can choose to enter either a refresh token in the `config` command or provide username and password on the command line.
+
+### Username/password authentication
+
+Pass in your reddit username and password as options in the command line. If you have 2-Factor Authentication enabled, append your 2FA code to the end of your password with a colon (password:code).
+
+```
+node-srutils backup /r/<subreddit> --username <reddit-username> --password <reddit-password>
+```
+
+### OAuth
+
+With the `config` command, you can save your OAuth refresh token to avoid having to authenticate manually on each run of the script.
+
 ## Commands
 
 ### config
@@ -53,27 +74,6 @@ node-srutils restore valid_node_srutils_subreddit_backup.zip
 ```
 
 Includes subreddit stylesheet, images, sidebar content, and flair templates.
-
-## Authenticating
-
-To use this tool, you must authenticate to the Reddit API. You must provide either:
-
-* (a) clientId, clientSecret, refreshToken
-* (b) clientId, clientSecret, username, password
-
-To store the client ID and client secret token in the configuration file, you must run the `config` command. You can choose to enter either a refresh token in the `config` command or provide username and password on the command line.
-
-### Username/password authentication
-
-Pass in your reddit username and password as options in the command line. If you have 2-Factor Authentication enabled, append your 2FA code to the end of your password with a colon (password:code).
-
-```
-node-srutils backup /r/<subreddit> --username <reddit-username> --password <reddit-password>
-```
-
-### OAuth
-
-With the `config` command, you can save your OAuth refresh token to avoid having to authenticate manually on each run of the script.
 
 ## Development
 
