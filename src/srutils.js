@@ -6,16 +6,45 @@ import fs from 'fs';
 import rimraf from 'rimraf';
 import didyoumean from 'didyoumean';
 import { version } from '../package.json';
-import keys from '../opendoors';
-import { clone, reset, backup, restore } from './commands';
+import keys from '../opendoors.json';
+import { config, clone, reset, backup, restore } from './commands';
+
+program
+  .version(version)
+  .option('-u, --username [username]', 'provide reddit username')
+  .option(
+    '-p, --password [password]',
+    'provide reddit password. If you have 2-Factor Authentication enabled, append your 2FA code to the end of your password with a colon (password:code)'
+  )
+  .parse(process.argv);
+
+if (process.argv.length === 2) {
+  program.help();
+}
+
+if (
+  !(
+    (keys.clientId && keys.clientSecret && keys.refreshToken) ||
+    (program.username && program.password)
+  )
+) {
+  console.log(
+    'Reddit credentials required. Provide username and password via flags, or create a configuration file to save your OAuth credentials. Check the help menu for more information on how to provide credentials.'
+  );
+  process.exit(1);
+}
 
 const r = new Snoowrap({
   userAgent: `Node.js:node-srutils:v${version} (by /u/fiveSeveN_)`,
   ...keys,
 });
 
-// TODO: help and options
-program.version(version);
+program
+  .command('config')
+  .description('Configure your credentials for accessing the Reddit API.')
+  .action(() => {
+    config();
+  });
 
 program
   .command('clone <from> <to>')
